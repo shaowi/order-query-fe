@@ -1,6 +1,10 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import TableView from './components/TableView';
+import { GET_TOP_10_CUSTOMERS as GET_TOP_10_CUSTOMERS_URL } from './routes';
 
 const Container = styled.div`
   display: flex;
@@ -57,22 +61,53 @@ const Button = styled.button`
 function App() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [customers, setCustomers] = useState([]);
+
+  const MySwal = withReactContent(Swal);
+
+  const isAfter = (startDate, endDate) =>
+    new Date(startDate) > new Date(endDate);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (startDate === '' || endDate === '') {
+      MySwal.fire({
+        title: 'Error!',
+        text: 'Please select a start and end date',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
+    if (isAfter(startDate, endDate)) {
+      MySwal.fire({
+        title: 'Error!',
+        text: 'Start date cannot be greater than end date',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
     try {
-      const response = await axios.get(
-        'http://localhost:8080/api/customers/top',
-        {
-          params: {
-            startDate,
-            endDate
-          }
+      const response = await axios.get(GET_TOP_10_CUSTOMERS_URL, {
+        params: {
+          startDate,
+          endDate
         }
-      );
+      });
       console.log(response.data);
+      setCustomers(response.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error(error);
+      MySwal.fire({
+        title: 'Error!',
+        text: 'An error occurred while fetching data',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
     }
   };
 
@@ -98,6 +133,7 @@ function App() {
         </FormGroup>
         <Button type="submit">Submit</Button>
       </Form>
+      {customers.length > 0 && <TableView customers={customers} />}
     </Container>
   );
 }
