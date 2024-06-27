@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import TableView from './components/TableView';
-import { GET_TOP_10_CUSTOMERS as GET_TOP_10_CUSTOMERS_URL } from './routes';
+import { GET_TOP_10_CUSTOMERS_URL } from './routes';
 
 const Container = styled.div`
   display: flex;
