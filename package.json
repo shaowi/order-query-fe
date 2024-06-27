@@ -1,5 +1,5 @@
 {
-  "name": "order-query-app",
+  "name": "order-query-app-fe",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
